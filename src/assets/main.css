@@ -1,0 +1,14 @@
+
+@import "tailwindcss";
+
+@theme {
+  --color-weather-primary: rgb(0 102 138); 
+  /* "#00668A" */
+  --color-weather-secondary: rgb(0 78 103);
+
+  --font-Roboto: ["Roboto, sans-serif"];
+
+  --container-padding: padding: 2rem;
+  --container-center: center: true;
+  /* ... */
+}
