@@ -4,6 +4,6 @@
     </div>
 </template>
 
-<script>
+<script setup lang="ts">
 const a = [""] 
 </script>

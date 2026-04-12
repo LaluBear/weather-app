@@ -9,9 +9,13 @@
             </RouterLink>
 
             <div class="flex gap-3 flex-1 justify-end">
-                <i class="fa-solid fa-circle-info text-xl 
-                hover:text-weather-primary 
-                duration-150-cursor-pointer"
+                <i class="fa-solid fa-location-crosshairs text-xl
+                hover:text-weather-primary
+                duration-150 cursor-pointer"
+                @click="getCurrentLocation"></i>
+                <i class="fa-solid fa-circle-info text-xl
+                hover:text-weather-primary
+                duration-150 cursor-pointer"
                 @click="toggleModal"></i>
 
                 <i class="fa-solid fa-plus  text-xl hover:text-weather-primary duration-150-cursor-pointer"
@@ -61,29 +65,33 @@
     </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import BaseModal from './BaseModal.vue';
 import { uid } from 'uid';
 import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
+import type { locationObjType } from '@/type/OpenWeatherOneCall';
 
 const route = useRoute();
 const router = useRouter();
-const savedCities = ref([]);
+const savedCities = ref<locationObjType[]>([]);
 let query = Object.assign({},route.query);
 console.log(route)
 const addCity = () => {
     if(localStorage.getItem("savedCities")){
-        savedCities.value = JSON.parse(localStorage.getItem("savedCities")) 
+        const data = localStorage.getItem("savedCities");
+        savedCities.value = JSON.parse(data?data:"{}");
     }
-    const locationObj = {
+    const locationObj: locationObjType = {
         id:uid(),
         state: route.params.state,
         city: route.params.city,
         coord: {
             lat: route.query.lat,
             lng: route.query.lng,
-        }
+        },
+        weather: null
     }
     console.log(route);
     savedCities.value.push(locationObj);
@@ -95,9 +103,69 @@ const addCity = () => {
     router.replace({query})
 };
 
-const modalActive = ref(null);
+const modalActive = ref(false);
 const toggleModal = () => {
     modalActive.value = !modalActive.value;
 }
+
+const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const { latitude, longitude } = position.coords;
+
+            try {
+                const mapboxToken = import.meta.env.VITE_MAPBOX_API_KEY;
+                const response = await axios.get(
+                    `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${longitude}&latitude=${latitude}&access_token=${mapboxToken}`
+                );
+                console.log(response);
+                const features = response.data.features;
+                let city = "location";
+                let state = "current";
+                let code = "";
+                if (features && features.length > 0) {
+                    const features2 = features[0].properties.place_formatted.split(",");
+                    while(typeof features2[0] === "number"){
+                        features2.shift();
+                    }
+                    [state, city] = features2;
+                }
+
+                router.push({
+                    name: 'cityView',
+                    params: { state, city },
+                    query: { lat: latitude, lng: longitude }
+                });
+            } catch (error) {
+                console.error("Mapbox Geocoding Error:", error);
+                // Fallback: Navigate using coordinates and placeholders if reverse geocoding fails
+                router.push({
+                    name: 'cityView',
+                    params: { state: 'current', city: 'location' },
+                    query: { lat: latitude, lng: longitude }
+                });
+            }
+        },
+        (error) => {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+            }
+        }
+    );
+};
+
 
 </script>

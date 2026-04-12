@@ -15,7 +15,7 @@
         <p v-if="searchError">
           Sorry, something went wrong, please try again
         </p>
-        <p v-if="mapboxSearchResults && !serverError && mapboxSearchResults.length ===0">
+        <p v-if="mapboxSearchResults && !searchError && mapboxSearchResults.length ===0">
           No search results
         </p>
         <li 
@@ -41,7 +41,7 @@
     </div>
   </main>
 </template>
-<script setup>
+<script setup lang="ts">
 
 import CityCardSkeleton from '@/components/CityCardSkeleton.vue';
 import CityList from '@/components/CityList.vue';
@@ -49,15 +49,25 @@ import axios from 'axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+interface MapboxFeature {
+  id: string;
+  properties: {
+    place_formatted: string;
+  };
+  geometry: {
+    coordinates: [number, number];
+  };
+}
+
 const router = useRouter();
 const mapBoxAPIKEY = import.meta.env.VITE_MAPBOX_API_KEY;
 
 const searchQuery = ref("");
 const searchError = ref(false)
-const queryTimeout = ref(null);
-const mapboxSearchResults = ref(null);
+const queryTimeout = ref<number | undefined>(undefined);
+const mapboxSearchResults = ref<MapboxFeature[]>([]);
 
-const previewCity = (searchResult) => {
+const previewCity = (searchResult:any) => {
   console.log(searchResult)
   const [city, state] = searchResult.properties.place_formatted.split(",")
   console.log(city,state)
@@ -67,7 +77,7 @@ const previewCity = (searchResult) => {
     query:{
       lat: searchResult.geometry.coordinates[1],
       lng: searchResult.geometry.coordinates[0],
-      preview: true
+      preview: "true"
     }
   })
 }
@@ -91,7 +101,7 @@ const getSearchResults = ()=>{
       // console.log(mapboxSearchResults.value)
       return;
     }
-    mapboxSearchResults.value = null
+    mapboxSearchResults.value = [];
     return;
   }, 300)
 }

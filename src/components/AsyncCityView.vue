@@ -13,7 +13,7 @@
             <h1 class="text-4xl mb-2">
                 <p class="text-sm mb-12">
                     {{ 
-                        new Date(weatherData.data.currentTime).toLocaleDateString(
+                        new Date(weatherData?.data.currentTime).toLocaleDateString(
                             "en-us",
                             {
                                 weekday: "short",
@@ -24,7 +24,7 @@
                         )    
                     }}
                     {{ 
-                        new Date(weatherData.data.currentTime).toLocaleTimeString(
+                        new Date(weatherData?.data.currentTime).toLocaleTimeString(
                             "en-us",
                             {
                                 timeStyle: "short",
@@ -33,18 +33,18 @@
                     }}
                 </p>
                 <p class="text-8xl mb-8">
-                    {{ Math.round(weatherData.data.current.temp) }}&deg;
+                    {{ Math.round(weatherData?.data.current.temp) }}&deg;
                 </p>
                 <p>
                     Feels like
-                    {{ Math.round(weatherData.data.current.feels_like) }}&deg;
+                    {{ Math.round(weatherData?.data.current.feels_like) }}&deg;
                 </p>
                 <p class="capitalize">
-                    {{ weatherData.data.current.weather[0].description }}
+                    {{ weatherData?.data.current.weather[0].description }}
                 </p>
                 <img
                     class="w-{150px} h-auto"
-                    :src="`https://openweathermap.org/payload/api/media/file/${weatherData.data.current.weather[0].icon}.png`"
+                    :src="`https://openweathermap.org/payload/api/media/file/${weatherData?.data.current.weather[0].icon}.png`"
                 />
             </h1>
         
@@ -56,7 +56,7 @@
                  <h2 class="mb-4">Hourly Weather</h2>
                  <div class="flex gap-10 overflow-x-scroll">
                     <div 
-                    v-for="hourData in weatherData.data.hourly"
+                    v-for="hourData in weatherData?.data.hourly"
                     :key="hourData.dt"
                     class="flex flex-col gap-4 items-center">
                         <p class="whitespace-nowrap text-md">
@@ -83,7 +83,7 @@
          <div class="max-w-screen-md w-full py-12">
             <div class="">7 Day Forecast</div>
             <div
-                v-for="day in weatherData.data.daily"
+                v-for="day in weatherData?.data.daily"
                 :key="day.dt"
                 class="flex items-center"
                 ><p class="flex-1">
@@ -113,7 +113,8 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { CurrentWeather, Hourly, locationObjType } from '@/type/OpenWeatherOneCall';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -123,13 +124,13 @@ const router = useRouter();
 const getWeatherData = async () => {
     try
     {
-        const weatherData = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${route.query.lat}&lon=${route.query.lng}&exclude={part}&appid=${openWeatherMapAPIKEY}`);
+        const weatherData= await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${route.query.lat}&lon=${route.query.lng}&exclude={part}&appid=${openWeatherMapAPIKEY}`);
         
         //cal current date & time
         const localOffset = new Date().getTimezoneOffset() * 60000;
-        const utc = weatherData.data.current.dt * 1000 + localOffset;
-        weatherData.data.currentTime = utc + 1000 * weatherData.data.timezone_offset
-        ;weatherData.data.hourly.forEach((hour) => {
+        const utc = weatherData?.data.current.dt * 1000 + localOffset;
+        weatherData.data.currentTime = utc + 1000 * weatherData.data.timezone_offset;
+        weatherData.data.hourly.forEach((hour: Hourly) => {
             const utc = hour.dt * 1000 + localOffset;
             hour.currentTime = utc + 1000 * weatherData.data.timezone_offset;
         });
@@ -141,10 +142,11 @@ const getWeatherData = async () => {
 }
 
 const weatherData = await getWeatherData();
-
+console.log(weatherData);
 const removeCity = () => {
-    const cities = JSON.parse(localStorage.getItem('savedCities'))
-    const updatedCities = cities.filter((city)=>{city.id!==route.query.id})
+    const data = localStorage.getItem('savedCities');
+    const cities = JSON.parse(data?data:"{}");
+    const updatedCities = cities.filter((city: locationObjType)=>{city.id!==route.query.id})
     localStorage.setItem("savedCities",JSON.stringify(updatedCities))
     router.push({name:"home"})
 }

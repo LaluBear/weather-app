@@ -1,31 +1,30 @@
 <template>
     <div 
-    v-for="city in savedCities" :key="city.id">
+    v-for="city in savedCities" :key="city.id?city.id:0">
         <CityCard :city="city" 
         @click="goToCityView(city)"/>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
 import CityCard from './CityCard.vue';
 import { useRouter } from 'vue-router';
+import type { locationObjType } from '@/type/OpenWeatherOneCall';
 
 console.log(import.meta)
-const savedCities = ref([]);
+const savedCities = ref<locationObjType[]>([]);
 const openWeatherMapAPIKEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY
 const getCities = async () => {
     if (localStorage.getItem('savedCities')){
+        const data = localStorage.getItem("savedCities")?localStorage.getItem("savedCities"):"{}"
         savedCities.value = JSON.parse(
-            localStorage.getItem("savedCities")
+            data?data:"{}"
         )
     }
-    const requests = []
-    savedCities.value.forEach((city)=>{
-        requests.push(
-           axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.coord.lat}&lon=${city.coord.lng}&appid=${openWeatherMapAPIKEY}`)
-        )
+    const requests = savedCities.value.map((city)=>{
+        return axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.coord.lat}&lon=${city.coord.lng}&appid=${openWeatherMapAPIKEY}`)
     });
 
     const weatherData = await Promise.all(requests);
@@ -33,7 +32,10 @@ const getCities = async () => {
     await new Promise((res) => setTimeout(res,1000)); 
 
     weatherData.forEach((value, index)=>{
-        savedCities.value[index].weather = value.data;
+        const city = savedCities.value[index];
+        if (city) {
+            city.weather = value.data;
+        }
         console.log(index);
         console.log(value);
     })
@@ -41,7 +43,7 @@ const getCities = async () => {
 const router = useRouter();
 await getCities();
 
-const goToCityView = (city) =>{
+const goToCityView = (city: locationObjType) =>{
     router.push({
         name:"cityView",
         params: { state: city.state, city: city.city },
