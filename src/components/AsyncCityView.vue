@@ -134,7 +134,6 @@ const getWeatherData = async () => {
             const utc = hour.dt * 1000 + localOffset;
             hour.currentTime = utc + 1000 * weatherData.data.timezone_offset;
         });
-        console.log(utc);
         return weatherData;
     } catch(err){
         console.log(err);
@@ -142,7 +141,6 @@ const getWeatherData = async () => {
 }
 
 const weatherData = await getWeatherData();
-console.log(weatherData);
 const removeCity = () => {
     const data = localStorage.getItem('savedCities');
     const cities = JSON.parse(data?data:"{}");

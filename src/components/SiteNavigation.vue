@@ -77,7 +77,6 @@ const route = useRoute();
 const router = useRouter();
 const savedCities = ref<locationObjType[]>([]);
 let query = Object.assign({},route.query);
-console.log(route)
 const addCity = () => {
     if(localStorage.getItem("savedCities")){
         const data = localStorage.getItem("savedCities");
@@ -93,7 +92,6 @@ const addCity = () => {
         },
         weather: null
     }
-    console.log(route);
     savedCities.value.push(locationObj);
     localStorage.setItem("savedCities", JSON.stringify(savedCities.value));
 
@@ -123,7 +121,7 @@ const getCurrentLocation = () => {
                 const response = await axios.get(
                     `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${longitude}&latitude=${latitude}&access_token=${mapboxToken}`
                 );
-                console.log(response);
+                
                 const features = response.data.features;
                 let city = "location";
                 let state = "current";

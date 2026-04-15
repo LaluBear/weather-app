@@ -13,7 +13,6 @@ import CityCard from './CityCard.vue';
 import { useRouter } from 'vue-router';
 import type { locationObjType } from '@/type/OpenWeatherOneCall';
 
-console.log(import.meta)
 const savedCities = ref<locationObjType[]>([]);
 const openWeatherMapAPIKEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY
 const getCities = async () => {
@@ -36,8 +35,6 @@ const getCities = async () => {
         if (city) {
             city.weather = value.data;
         }
-        console.log(index);
-        console.log(value);
     })
 }
 const router = useRouter();

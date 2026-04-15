@@ -23,8 +23,6 @@ defineProps({
         default:( )=>{},
     }
 })
-// console.log("weather")
-// await Promise.all(console.log(city.weather))
 </script>
 
 <style lang="scss" scoped>
