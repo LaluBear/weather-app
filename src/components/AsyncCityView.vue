@@ -10,7 +10,10 @@
         <!-- Weather Overview -->
          <div class="flex flex-col items-center text-white py-12">
             
-            <h1 class="text-4xl mb-2">
+            <h1 class="text-4xl mb-2 text-center">
+                <p class="text-2xl font-bold mb-2">
+                    {{ route.params.city }}, {{ route.params.state }}
+                </p>
                 <p class="text-sm mb-12">
                     {{ 
                         new Date(weatherData?.data.currentTime).toLocaleDateString(

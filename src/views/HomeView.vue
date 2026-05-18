@@ -15,7 +15,7 @@
         <p v-if="searchError">
           Sorry, something went wrong, please try again
         </p>
-        <p v-if="mapboxSearchResults && !searchError && mapboxSearchResults.length === 0">
+        <p v-if="mapboxSearchResults && searchQuery && mapboxSearchResults.length === 0">
           No search results
         </p>
         <li 
@@ -68,9 +68,8 @@ const queryTimeout = ref<number | undefined>(undefined);
 const mapboxSearchResults = ref<MapboxFeature[]>([]);
 
 const previewCity = (searchResult:any) => {
-  console.log(searchResult)
   const [city, state] = searchResult.properties.place_formatted.split(",")
-  console.log(city,state)
+  
   router.push({
     name: "cityView",
     params: {state: state.replaceAll(" ",""), city: city},
@@ -98,7 +97,6 @@ const getSearchResults = ()=>{
         searchError.value = true
       }
 
-      // console.log(mapboxSearchResults.value)
       return;
     }
     mapboxSearchResults.value = [];
