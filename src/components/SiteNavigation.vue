@@ -1,43 +1,41 @@
 <template>
-    <header class="sticky top-0 bg-weather-primary shadow-lg px-4">
+    <header class="sticky top-0 bg-weather-primary shadow-lg px-4 z-50">
         <nav class="container flex flex-col sm:flex-row items-center gap-4 text-white py-6">
-            <RouterLink :to="{name: 'home'}">
+            <RouterLink :to="{name: 'home'}" class="transition-all duration-200 hover:opacity-80">
                 <div class="flex items-center gap-3">
                     <i class="fas fa-sun text-2xl"></i>
-                    <p>The Local Weather</p>
+                    <p class="font-semibold">The Local Weather</p>
                 </div>
             </RouterLink>
 
-            <div class="flex gap-3 flex-1 justify-end">
+            <div class="flex gap-5 flex-1 justify-end items-center">
                 <i class="fa-solid fa-location-crosshairs text-xl
                 hover:text-weather-primary
-                duration-150 cursor-pointer"
+                transition-all duration-200 cursor-pointer"
                 @click="getCurrentLocation"></i>
                 <i class="fa-solid fa-circle-info text-xl
                 hover:text-weather-primary
-                duration-150 cursor-pointer"
+                transition-all duration-200 cursor-pointer"
                 @click="toggleModal"></i>
 
-                <i class="fa-solid fa-plus  text-xl hover:text-weather-primary duration-150-cursor-pointer"
+                <i class="fa-solid fa-plus text-xl hover:text-weather-primary transition-all duration-200 cursor-pointer"
                 @click="addCity"
                 v-if="route.query.preview"
-               
                 ></i>
-                
             </div>
 
-            <BaseModal 
+            <BaseModal
                 :modalActive="modalActive"
                 @close-modal="toggleModal"
             >
                 <div class="text-black">
-                    <h1 class="text-2xl mb-1">About:</h1>
-                    <p class="mb-4">
+                    <h1 class="text-2xl mb-1 font-bold">About:</h1>
+                    <p class="mb-4 opacity-80">
                         The Local Weather allows you to track the current and
                         future weather of cities of your choosing.
                     </p>
-                    <h2 class="text-2xl">How it works:</h2>
-                    <ol class="list-decimal list-inside mb-4">
+                    <h2 class="text-2xl mb-2 font-bold">How it works:</h2>
+                    <ol class="list-decimal list-inside mb-4 space-y-2 opacity-80">
                         <li>
                         Search for your city by entering the name into the
                         search bar.
@@ -53,8 +51,8 @@
                         </li>
                     </ol>
 
-                    <h2 class="text-2xl">Removing a city</h2>
-                    <p>
+                    <h2 class="text-2xl mb-2 font-bold">Removing a city</h2>
+                    <p class="opacity-80">
                         If you no longer wish to track a city, simply select
                         the city within the home page. At the bottom of the
                         page, there will be am option to delete the city.

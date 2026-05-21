@@ -1,16 +1,16 @@
 <template>
-    <div class="flex py-6 px-3 bg-weather-secondary rounded-e-4xl shadow-md cursor-pointer">
+    <div class="flex py-6 px-4 bg-weather-secondary rounded-2xl shadow-md cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:bg-weather-primary/80">
         <div class="flex flex-col flex-1">
-            <div class="text-3xl">{{ city.city }}</div>
-            <div>{{ city.state }}</div>
+            <div class="text-3xl font-bold">{{ city.city }}</div>
+            <div class="text-sm opacity-70">{{ city.state }}</div>
         </div>
-        <div class="flex flex-col gap-2">
-            <p class="text-3xl self-end">
+        <div class="flex flex-col gap-1 text-right">
+            <p class="text-3xl font-semibold">
                 {{ Math.round(city.weather.current.temp) }}&deg;
             </p>
-            <div class="flex gap-2">
-                <span class="text-xs">H: {{ Math.round(city.weather.current.temp) }}&deg;</span>
-                <span class="text-xs">L: {{ Math.round(city.weather.current.temp) }}&deg;</span>
+            <div class="flex gap-2 text-xs opacity-70">
+                <span>H: {{ Math.round(city.weather.current.temp) }}&deg;</span>
+                <span>L: {{ Math.round(city.weather.current.temp) }}&deg;</span>
             </div>
         </div>
     </div>

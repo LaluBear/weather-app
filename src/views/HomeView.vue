@@ -3,25 +3,28 @@
 <template>
   <main class="container text-white">
     <div class="pt-4 mb-8 relative">
-      <input type="text" 
-      placeholder="Search for a city or state"
-      v-model="searchQuery"
-      @input="getSearchResults"
-      class="py-2 px-4 w-full bg-transparent border-b 
-      focus:border-weather-secondary focus:outline-none
-      focus:shadow-[0px_1px_0_0_#004E71]">
-      <ul class="absolute bg-weather-secondary text-white 
-      w-full shadow-md py-2 px-4 top-[66px]">
-        <p v-if="searchError">
+      <div class="relative flex items-center">
+        <i class="fas fa-search absolute left-4 text-white/50"></i>
+        <input type="text"
+        placeholder="Search for a city or state"
+        v-model="searchQuery"
+        @input="getSearchResults"
+        class="py-2 pl-11 pr-4 w-full bg-transparent border-b
+        border-white/20 focus:border-weather-secondary focus:outline-none
+        transition-colors duration-200 focus:shadow-[0px_1px_0_0_#004E71]">
+      </div>
+      <ul class="absolute bg-weather-secondary text-white
+      w-full shadow-xl py-2 px-4 top-full left-0 z-10 rounded-b-lg overflow-hidden">
+        <p v-if="searchError" class="py-2 px-4 text-sm text-red-300">
           Sorry, something went wrong, please try again
         </p>
-        <p v-if="mapboxSearchResults && searchQuery && mapboxSearchResults.length === 0">
+        <p v-if="mapboxSearchResults && searchQuery && mapboxSearchResults.length === 0" class="py-2 px-4 text-sm opacity-70">
           No search results
         </p>
-        <li 
+        <li
           v-for="searchResult in mapboxSearchResults"
           :key="searchResult.id"
-          class="text-white py-2 cursor-pointer"
+          class="py-2 px-4 cursor-pointer hover:bg-white/10 transition-colors duration-150 text-sm"
           v-if="mapboxSearchResults"
           @click="previewCity(searchResult)"
         >

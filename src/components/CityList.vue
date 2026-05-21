@@ -23,7 +23,7 @@ const getCities = async () => {
         )
     }
     const requests = savedCities.value.map((city)=>{
-        return axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.coord.lat}&lon=${city.coord.lng}&appid=${openWeatherMapAPIKEY}`)
+        return axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.coord.lat}&lon=${city.coord.lng}&appid=${openWeatherMapAPIKEY}&units=metric`)
     });
 
     const weatherData = await Promise.all(requests);
